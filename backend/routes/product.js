@@ -3,11 +3,14 @@ import express from "express";
 import {
 	getAllProducts,
 	createProduct,
+	editProduct,
 	deleteProduct,
 	searchProducts,
 	getProduct,
 	getProductDetail,
 } from "../controllers/productController.js";
+
+import { isAdmin } from "../middleware/access.js"
 
 const router = express.Router();
 
@@ -15,7 +18,9 @@ const router = express.Router();
 router.get("/", getAllProducts);
 
 // Create a new product
-router.post("/", createProduct);
+router.post("/:productId", createProduct);
+
+router.put("/:productId", editProduct)
 
 // Delete a product
 router.delete("/", deleteProduct);

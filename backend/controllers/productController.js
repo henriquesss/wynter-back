@@ -2,7 +2,7 @@ import connectDatabase from "../config/database.js";
 import { ObjectId } from "mongodb";
 const db = await connectDatabase();
 const collection = db.collection("products");
-// import Product from "../models/productSchema.js";
+//import Product from "../models/productSchema.js";
 
 const productVariants = {
     "myPhone": ["128GB", "256GB", "512GB"],
@@ -71,7 +71,38 @@ export const createProduct = async (req, res) => {
 };
 
 export const editProduct = async (req, res) => {
-	return res.status(200).json({ message: "Edit product route" });
+	try {
+		const { productId } = req.params;
+		const updatedData = {
+			name: req.body.name,
+			price: req.body.price,
+			description: req.body.description,
+			tags: req.body.tags
+		};
+		console.log('data', updatedData)
+
+		// test:task6
+		if (!updatedData) {
+			res.status(500).json({ error: "Product data not found" });
+		}
+
+		const updatedProduct = await collection.updateOne(
+			{ _id: new ObjectId(productId) },
+			{ $set: updatedData }
+		);
+
+		if (updatedProduct.modifiedCount === 0) {
+			return res.status(404).json({ error: "Product not found" });
+    }
+
+    return res.status(200).json({ message: "Product updated", updatedProduct });
+	} catch (error) {
+		console.error(
+			`Error updating product details with ID ${req.params.productId}:`,
+			error,
+		);
+		res.status(500).json({ error: "Internal server error" });
+	}
 };
 
 export const searchProducts = async (req, res) => {
