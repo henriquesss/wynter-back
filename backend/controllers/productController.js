@@ -70,6 +70,7 @@ export const createProduct = async (req, res) => {
 	}
 };
 
+// Test Task 6
 export const editProduct = async (req, res) => {
 	try {
 		const { productId } = req.params;
@@ -79,23 +80,17 @@ export const editProduct = async (req, res) => {
 			description: req.body.description,
 			tags: req.body.tags
 		};
-		console.log('data', updatedData)
 
-		// test:task6
 		if (!updatedData) {
 			res.status(500).json({ error: "Product data not found" });
 		}
 
 		const updatedProduct = await collection.updateOne(
 			{ _id: new ObjectId(productId) },
-			{ $set: updatedData }
+			{ $set: updatedData },
 		);
 
-		if (updatedProduct.modifiedCount === 0) {
-			return res.status(404).json({ error: "Product not found" });
-    }
-
-    return res.status(200).json({ message: "Product updated", updatedProduct });
+		return res.status(200).json(updatedProduct)
 	} catch (error) {
 		console.error(
 			`Error updating product details with ID ${req.params.productId}:`,
